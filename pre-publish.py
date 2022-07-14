@@ -69,5 +69,19 @@ def main():
     print("Lexactivator library successfully downloaded!")
     shutil.rmtree(tmp_dir)
 
+    make_package(base_path)
+    print("Lexactivator library successfully coverted to Python package")
 
-main()
+
+def make_package(path):
+    """Add __init__.py for all subdirectories."""
+    for root, dirs, _files in os.walk(path):
+        dirs_with_root = [""] + dirs
+        for dirname in dirs_with_root:
+            filepath = os.path.join(root, dirname, "__init__.py")
+            with open(filepath, 'a'):
+                pass
+
+
+if __name__ == "__main__":
+    main()
