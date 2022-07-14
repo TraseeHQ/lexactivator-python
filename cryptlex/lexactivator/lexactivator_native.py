@@ -54,14 +54,20 @@ def get_library_path():
     if not os.path.exists(dir_path):
         dir_path = os.path.abspath(os.path.dirname(__file__))
 
+    if hasattr(sys, "frozen"):
+        # Construct path for Pyoxidizer's libs directory
+        binary_path = os.path.dirname(sys.executable)
+        libs_dir = "lib/cryptlex/lexactivator/"
+        dir_path = os.path.join(binary_path, libs_dir)
+
     if sys.platform == 'darwin':
-        return os.path.join(dir_path, "libs/macos/"+arch+"/libLexActivator.dylib")
+        return os.path.join(dir_path, f"libs/macos/{arch}/libLexActivator.dylib")
     elif sys.platform.startswith('linux'):
         if(is_musl()):
             compiler = 'musl'
-        return os.path.join(dir_path, "libs/linux/"+compiler+"/"+arch+"/libLexActivator.so")
+        return os.path.join(dir_path, f"libs/linux/{compiler}/{arch}/libLexActivator.so")
     elif sys.platform == 'win32':
-        return os.path.join(dir_path, "libs/win32/"+arch+"/LexActivator.dll")
+        return os.path.join(dir_path, f"libs/win32/{arch}/LexActivator.dll")
     else:
         raise TypeError("Platform not supported!")
 

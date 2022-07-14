@@ -1,0 +1,32 @@
+name: Upload to pypi.gallio.pro
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_wheel:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - run: git pull origin master --ff-only
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel twine
+
+    - name: Download Native Libs
+      run: python pre-publish.py
+
+    - name: Build and publish
+      env:
+        TWINE_REPOSITORY_URL: "https://pypi.gallio.pro/"
+        TWINE_USERNAME: ${{ secrets.GALL_PYPI_USER }}
+        TWINE_PASSWORD: ${{ secrets.GALL_PYPI_PASSWORD }}
+        TWINE_NON_INTERACTIVE: "true"
+      run: |
+        python setup.py sdist bdist_wheel
+        twine upload dist/*
